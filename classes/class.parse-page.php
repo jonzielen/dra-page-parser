@@ -108,7 +108,10 @@ class PageParse {
     $emailTemplate = file_get_contents('assets/email.html');
     $emailTemplate = str_replace("{email_message}", $this->items, $emailTemplate);
 
-    $email['to'] = 'jonzielen@gmail.com, adrian.m.morse@gmail.com';
+    if (file_exists('assets/email-list.txt')) {
+      $email['to'] = file('assets/email-list.txt', FILE_IGNORE_NEW_LINES);
+    }
+
     $email['subject'] = 'New Ryan Adams Items';
     $email['headers'] = "From: jon@zielenkievicz.com"."\r\n";
     $email['headers'] .= "Reply-To: jon@zielenkievicz.com"."\r\n";
@@ -116,9 +119,7 @@ class PageParse {
     $email['headers'] .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
     $email['message'] = $emailTemplate;
 
-    $emailList = explode(',', $email['to']);
-
-    foreach ($emailList as $key => $value) {
+    foreach ($email['to'] as $value) {
       mail($value, $email['subject'], $email['message'], $email['headers']);
     }
   }
@@ -127,7 +128,7 @@ class PageParse {
     $template = '<a href="{href}" style="text-decoration:none;">'."\n\r";
     $template .= '<h2 style="font-family:Arial, Helvetica, sans-serif;font-size:20px;color:#000001;font-weight:bold;margin-auto:0px;mso-line-height-rule:exactly;line-height:125%;">{title}</h2>'."\n\r";
     $template .= '<h3 style="font-family:Arial, Helvetica, sans-serif;font-size:14px;color:#000001;font-weight:bold;margin-auto:0px;mso-line-height-rule:exactly;line-height:125%;">{price}</h3>'."\n\r";
-    $template .= '<table cellspacing="0" cellpadding="0" border="0" align="center"><tr><td><img src="http:{image}" style="display:block;border:none;" alt="{title}" /></td></tr><tr><td height="15" style="height:14px !important;line-height:1px;font-size:0px;"><span style="font-size:0;line-height:0;">&nbsp;</span></td></tr></table>'."\n\r";
+    $template .= '<table cellspacing="0" cellpadding="0" border="0" align="center"><tr><td align="center"><img src="http:{image}" style="display:block;border:none;" alt="{title}" /></td></tr><tr><td height="15" style="height:14px !important;line-height:1px;font-size:0px;"><span style="font-size:0;line-height:0;">&nbsp;</span></td></tr></table>'."\n\r";
     $template .= '</a>'."\n\r";
 
     foreach ($productFromArray as $key => $value) {
